@@ -69,7 +69,7 @@ class imex_1st_order(sweeper):
         return me
 
 
-    def update_nodes(self):
+    def update_nodes(self,flag=False):
         """
         Update the u- and f-values at the collocation nodes -> corresponds to a single sweep over all nodes
 
@@ -104,15 +104,44 @@ class imex_1st_order(sweeper):
 
         # do the sweep
         for m in range(0,M):
-            # build rhs, consisting of the known values from above and new values from previous nodes (at k+1)
-            rhs = P.dtype_u(integral[m])
-            for j in range(m+1):
-                rhs += L.dt*(self.QI[m+1,j]*L.f[j].impl + self.QE[m+1,j]*L.f[j].expl)
 
-            # implicit solve with prefactor stemming from QI
-            L.u[m+1] = P.solve_system(rhs,L.dt*self.QI[m+1,m+1],L.u[m+1])
-            # update function values
-            L.f[m+1] = P.eval_f(L.u[m+1],L.time+L.dt*self.coll.nodes[m])
+            success = False
+            stopit = False
+
+            while not success:
+                # build rhs, consisting of the known values from above and new values from previous nodes (at k+1)
+                rhs = P.dtype_u(integral[m])
+                for j in range(m+1):
+                    rhs += L.dt*(self.QI[m+1,j]*L.f[j].impl + self.QE[m+1,j]*L.f[j].expl)
+
+                # implicit solve with prefactor stemming from QI
+                L.u[m+1] = P.solve_system(rhs,L.dt*self.QI[m+1,m+1],L.u[m+1])
+                # update function values
+                L.f[m+1] = P.eval_f(L.u[m+1],L.time+L.dt*self.coll.nodes[m])
+
+                # if m == 3 and flag:
+                #     print('pre:',L.u[m+1].values[10])
+                #     L.u[m+1].values[10] = L.u[m+1].values[10]+1
+                #     print('post:',L.u[m+1].values[10])
+
+                if m == 3 and flag and not stopit:
+                    print('pre:',L.f[m+1].impl.values[10])
+                    L.f[m+1].impl.values[10] = L.f[m+1].impl.values[10]+1
+                    print('post:',L.f[m+1].impl.values[10])
+                    stopit = True
+
+                res = self.integrate()
+                res[m] += L.u[0] - L.u[m+1]
+                newres = np.linalg.norm(res[m].values,np.inf)
+
+                if newres > L.oldres[m+1]:
+                    print('bad things happened, will repeat this step...',m)
+                    success = False
+                else:
+                    L.oldres[m+1] = newres
+                    success = True
+
+
 
         # indicate presence of new values at this level
         L.status.updated = True

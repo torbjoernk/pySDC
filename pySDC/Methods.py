@@ -311,7 +311,7 @@ def pfasst_serial(S):
             S.status.iter += 1
 
             # standard sweep workflow: update nodes, compute residual, log progress
-            S.levels[0].sweep.update_nodes()
+            S.levels[0].sweep.update_nodes(S.status.iter == 3)
             S.levels[0].sweep.compute_residual()
             S.levels[0].hooks.dump_sweep(S.status)
 

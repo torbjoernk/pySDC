@@ -70,6 +70,7 @@ class sweeper(metaclass=abc.ABCMeta):
         for m in range(1,self.coll.num_nodes+1):
             L.u[m] = P.dtype_u(L.u[0])
             L.f[m] = P.eval_f(L.u[m],L.time+L.dt*self.coll.nodes[m-1])
+            L.oldres[m] = 999
 
         # indicate that this level is now ready for sweeps
         L.status.unlocked = True

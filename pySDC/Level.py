@@ -49,7 +49,7 @@ class level():
 
 
     __slots__ = ('__prob','__sweep','uend','u','uold','f','fold','tau','status','params','id','__step','id','__tag',
-                 '__hooks')
+                 '__hooks', 'oldres')
 
 
     def __init__(self, problem_class, problem_params, dtype_u, dtype_f, collocation_class, num_nodes, sweeper_class,
@@ -94,6 +94,8 @@ class level():
         self.fold = [None] * (self.sweep.coll.num_nodes+1)
         self.tau = None
 
+        self.oldres = [None] * (self.sweep.coll.num_nodes+1)
+
         # set name
         self.id = id
 
@@ -121,6 +123,8 @@ class level():
         self.uold = [None] * (self.sweep.coll.num_nodes+1)
         self.f = [None] * (self.sweep.coll.num_nodes+1)
         self.fold = [None] * (self.sweep.coll.num_nodes+1)
+
+        self.oldres = [None] * (self.sweep.coll.num_nodes+1)
 
 
     def __add_tau(self):
