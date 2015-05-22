@@ -1,6 +1,7 @@
 from __future__ import division
 from pySDC.Hooks import hooks
 from pySDC.Stats import stats
+import pickle
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -22,7 +23,6 @@ class particles_output(hooks):
         self.sframe = None
 
 
-
     def dump_step(self,status):
         """
         Overwrite standard dump per step
@@ -41,12 +41,12 @@ class particles_output(hooks):
 
         stats.add_to_stats(step=status.step, time=status.time, type='energy', value=H)
 
-        oldcol = self.sframe
+        # oldcol = self.sframe
         # self.sframe = self.ax.scatter(L.uend.pos.values[0],L.uend.pos.values[1],L.uend.pos.values[2])
-        self.sframe = self.ax.scatter(L.uend.pos.values[0],L.uend.pos.values[1])
+        self.sframe = self.ax.scatter(L.uend.pos.values[0],L.uend.pos.values[1],linewidths=(0.1,0.1))
         # Remove old line collection before drawing
-        if oldcol is not None:
-            self.ax.collections.remove(oldcol)
-        plt.pause(0.00001)
+        # if oldcol is not None:
+        #     self.ax.collections.remove(oldcol)
+        plt.pause(0.0000001)
 
         return None

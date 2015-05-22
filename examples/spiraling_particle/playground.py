@@ -1,5 +1,6 @@
 from __future__ import division
 from subprocess import call
+import pickle
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -73,10 +74,11 @@ if __name__ == "__main__":
     H0 = 1/2*np.dot(uinit.vel.values[:],uinit.vel.values[:])+0.02/R0
 
     energy_err = [abs(entry[1]-H0)/H0 for entry in sortedlist_stats]
+    with open('energy_err.pickle', mode='wb') as f:
+        pickle.dump(energy_err, f)
 
     fig = plt.figure()
     plt.plot(energy_err,'bo--')
-
     plt.show()
 
 # rc('text', usetex=True)
