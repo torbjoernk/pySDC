@@ -128,8 +128,11 @@ class heat1d(ptype):
         """
 
         f = rhs_imex_mesh(self.nvars)
+        print("eval:   %s" % u)
         f.impl = self.__eval_fimpl(u,t)
+        print("  impl: %s" % f.impl)
         f.expl = self.__eval_fexpl(u,t)
+        print("  expl: %s" % f.expl)
         return f
 
 

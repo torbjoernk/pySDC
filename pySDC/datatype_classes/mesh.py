@@ -113,6 +113,9 @@ class mesh():
         # return maximum
         return np.amax(absval)
 
+    def __str__(self):
+        return str(self.values)
+
 
 class rhs_imex_mesh():
 

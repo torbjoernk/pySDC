@@ -131,8 +131,11 @@ class heat1d(ptype):
         """
 
         f = rhs_imex_mesh(self.nvars)
+        print("eval (t=%f):   %s" % (t, u))
         f.impl = self.__eval_fimpl(u,t)
+        print("  impl: %s" % f.impl)
         f.expl = self.__eval_fexpl(u,t)
+        print("  expl: %s" % f.expl)
         return f
 
 
@@ -150,4 +153,5 @@ class heat1d(ptype):
         me = mesh(self.nvars)
         xvalues = np.array([(i)*self.dx for i in range(self.nvars)])
         me.values = np.sin(2*np.pi*xvalues)*np.exp(-t*(2*np.pi)**2*self.nu)
+        print("exact (t=%f): %s" % (t, me.values))
         return me

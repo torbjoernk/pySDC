@@ -52,6 +52,9 @@ class imex_1st_order(sweeper):
             QI = np.zeros(np.shape(self.coll.Qmat))
             QI[1:,1:] = U.T
 
+        print("QE: %s" % QE)
+        print("QI: %s" % QI)
+
         return QI, QE
 
 
@@ -113,6 +116,7 @@ class imex_1st_order(sweeper):
                 integral[m] += L.tau[m]
 
         # do the sweep
+        print("u[0]: %s" % L.u[0])
         for m in range(0,M):
             # build rhs, consisting of the known values from above and new values from previous nodes (at k+1)
             rhs = P.dtype_u(integral[m])
@@ -123,6 +127,8 @@ class imex_1st_order(sweeper):
             L.u[m+1] = P.solve_system(rhs,L.dt*self.QI[m+1,m+1],L.u[m+1],L.time+L.dt*self.coll.nodes[m])
             # update function values
             L.f[m+1] = P.eval_f(L.u[m+1],L.time+L.dt*self.coll.nodes[m])
+            print("u[%d]: %s" % ((m+1), L.u[m+1]))
+
 
         # indicate presence of new values at this level
         L.status.updated = True
